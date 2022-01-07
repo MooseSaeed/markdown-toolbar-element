@@ -80,19 +80,14 @@ const styles = new WeakMap<Element, Style>()
 class MarkdownButtonElement extends HTMLElement {
   constructor() {
     super()
-    const apply = () => {
-      const style = styles.get(this)
-      if (!style) return
-      applyStyle(this, style)
-    }
-    this.addEventListener('keydown', function (event: KeyboardEvent) {
+
+    this.addEventListener('keydown', (event: KeyboardEvent) => {
       if (event.key === ' ' || event.key === 'Enter') {
         event.preventDefault()
-        apply()
+        this.apply()
       }
     })
-
-    this.addEventListener('click', apply)
+    this.addEventListener('click', this.apply)
   }
 
   connectedCallback() {
@@ -101,7 +96,7 @@ class MarkdownButtonElement extends HTMLElement {
     }
   }
 
-  click() {
+  apply() {
     const style = styles.get(this)
     if (!style) return
     applyStyle(this, style)
