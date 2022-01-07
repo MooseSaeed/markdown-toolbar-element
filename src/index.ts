@@ -389,10 +389,6 @@ function isMultipleLines(string: string): boolean {
   return string.trim().split('\n').length > 1
 }
 
-function repeat(string: string, n: number): string {
-  return Array(n + 1).join(string)
-}
-
 function wordSelectionStart(text: string, i: number): number {
   let index = i
   while (text[index] && text[index - 1] != null && !text[index - 1].match(/\s/)) {
@@ -521,11 +517,11 @@ function newlinesToSurroundSelectedText(textarea: HTMLTextAreaElement): {
   let newlinesToPrepend
 
   if (beforeSelection.match(/\S/) && newlinesBeforeSelection < 2) {
-    newlinesToAppend = repeat('\n', 2 - newlinesBeforeSelection)
+    newlinesToAppend = '\n'.repeat(2 - newlinesBeforeSelection)
   }
 
   if (afterSelection.match(/\S/) && newlinesAfterSelection < 2) {
-    newlinesToPrepend = repeat('\n', 2 - newlinesAfterSelection)
+    newlinesToPrepend = '\n'.repeat(2 - newlinesAfterSelection)
   }
 
   if (newlinesToAppend == null) {
