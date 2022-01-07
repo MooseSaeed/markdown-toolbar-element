@@ -78,9 +78,7 @@ type Style = {
 const styles = new WeakMap<Element, Style>()
 
 class MarkdownButtonElement extends HTMLElement {
-  constructor() {
-    super()
-
+  connectedCallback() {
     this.addEventListener('keydown', (event: KeyboardEvent) => {
       if (event.key === ' ' || event.key === 'Enter') {
         event.preventDefault()
@@ -88,9 +86,7 @@ class MarkdownButtonElement extends HTMLElement {
       }
     })
     this.addEventListener('click', this.apply)
-  }
 
-  connectedCallback() {
     if (!this.hasAttribute('role')) {
       this.setAttribute('role', 'button')
     }
