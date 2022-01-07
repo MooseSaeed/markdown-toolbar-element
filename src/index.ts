@@ -82,20 +82,44 @@ class MarkdownButtonElement extends HTMLElement {
     this.addEventListener('keydown', (event: KeyboardEvent) => {
       if (event.key === ' ' || event.key === 'Enter') {
         event.preventDefault()
-        this.apply()
+        this.#apply()
       }
     })
-    this.addEventListener('click', this.apply)
+    this.addEventListener('click', this.#apply)
 
     if (!this.hasAttribute('role')) {
       this.setAttribute('role', 'button')
     }
   }
 
-  apply() {
-    const style = styles.get(this)
-    if (!style) return
-    applyStyle(this, style)
+  #apply() {
+    const stylesToApply = styles.get(this)
+    if (!stylesToApply) return
+
+    const toolbar = this.closest('markdown-toolbar')
+    if (!(toolbar instanceof MarkdownToolbarElement)) return
+
+    const field = toolbar.field
+    if (!field) return
+
+    const style = {
+      prefix: '',
+      suffix: '',
+      blockPrefix: '',
+      blockSuffix: '',
+      multiline: false,
+      replaceNext: '',
+      prefixSpace: false,
+      scanFor: '',
+      surroundWithNewlines: false,
+      orderedList: false,
+      unorderedList: false,
+      trimFirst: false,
+      ...stylesToApply
+    }
+
+    field.focus()
+    styleSelectedText(field, style)
   }
 }
 
@@ -715,34 +739,6 @@ interface StyleArgs {
   orderedList: boolean
   unorderedList: boolean
   trimFirst: boolean
-}
-
-function applyStyle(button: Element, stylesToApply: Style) {
-  const toolbar = button.closest('markdown-toolbar')
-  if (!(toolbar instanceof MarkdownToolbarElement)) return
-
-  const defaults = {
-    prefix: '',
-    suffix: '',
-    blockPrefix: '',
-    blockSuffix: '',
-    multiline: false,
-    replaceNext: '',
-    prefixSpace: false,
-    scanFor: '',
-    surroundWithNewlines: false,
-    orderedList: false,
-    unorderedList: false,
-    trimFirst: false
-  }
-
-  const style = {...defaults, ...stylesToApply}
-
-  const field = toolbar.field
-  if (field) {
-    field.focus()
-    styleSelectedText(field, style)
-  }
 }
 
 export default MarkdownToolbarElement
