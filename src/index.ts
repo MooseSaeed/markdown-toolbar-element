@@ -60,15 +60,6 @@ function getButtons(toolbar: Element): HTMLElement[] {
   return elements
 }
 
-function keydown(fn: (event: KeyboardEvent) => void): (event: KeyboardEvent) => void {
-  return function (event: KeyboardEvent) {
-    if (event.key === ' ' || event.key === 'Enter') {
-      event.preventDefault()
-      fn(event)
-    }
-  }
-}
-
 type Style = {
   prefix?: string
   suffix?: string
@@ -94,7 +85,13 @@ class MarkdownButtonElement extends HTMLElement {
       if (!style) return
       applyStyle(this, style)
     }
-    this.addEventListener('keydown', keydown(apply))
+    this.addEventListener('keydown', function (event: KeyboardEvent) {
+      if (event.key === ' ' || event.key === 'Enter') {
+        event.preventDefault()
+        apply()
+      }
+    })
+
     this.addEventListener('click', apply)
   }
 
