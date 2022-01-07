@@ -49,14 +49,15 @@ const buttonSelectors = [
   'md-ref',
   'md-strikethrough'
 ]
+// Get all the markdown toolbar buttons
 function getButtons(toolbar: Element): HTMLElement[] {
-  const els = []
+  const elements = []
   for (const button of toolbar.querySelectorAll<HTMLElement>(buttonSelectors.join(', '))) {
     // Skip buttons that are hidden, either via `hidden` attribute or CSS:
     if (button.hidden || (button.offsetWidth <= 0 && button.offsetHeight <= 0)) continue
-    if (button.closest('markdown-toolbar') === toolbar) els.push(button)
+    if (button.closest('markdown-toolbar') === toolbar) elements.push(button)
   }
-  return els
+  return elements
 }
 
 function keydown(fn: (event: KeyboardEvent) => void): (event: KeyboardEvent) => void {
