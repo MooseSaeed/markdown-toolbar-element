@@ -33,6 +33,47 @@ declare global {
   }
 }
 
+interface StyleArgs {
+  prefix: string
+  suffix: string
+  blockPrefix: string
+  blockSuffix: string
+  multiline: boolean
+  replaceNext: string
+  prefixSpace: boolean
+  scanFor: string
+  surroundWithNewlines: boolean
+  orderedList: boolean
+  unorderedList: boolean
+  trimFirst: boolean
+}
+
+interface Style {
+  prefix?: string
+  suffix?: string
+  trimFirst?: boolean
+  multiline?: boolean
+  surroundWithNewlines?: boolean
+  blockPrefix?: string
+  blockSuffix?: string
+  replaceNext?: string
+  scanFor?: string
+  orderedList?: boolean
+  unorderedList?: boolean
+  prefixSpace?: boolean
+}
+
+interface SelectionRange {
+  text: string
+  selectionStart: number | undefined
+  selectionEnd: number | undefined
+}
+
+interface UndoResult {
+  text: string
+  processed: boolean
+}
+
 const buttonSelectors = [
   '[data-md-button]',
   'md-header',
@@ -58,21 +99,6 @@ function getButtons(toolbar: Element): HTMLElement[] {
     if (button.closest('markdown-toolbar') === toolbar) elements.push(button)
   }
   return elements
-}
-
-type Style = {
-  prefix?: string
-  suffix?: string
-  trimFirst?: boolean
-  multiline?: boolean
-  surroundWithNewlines?: boolean
-  blockPrefix?: string
-  blockSuffix?: string
-  replaceNext?: string
-  scanFor?: string
-  orderedList?: boolean
-  unorderedList?: boolean
-  prefixSpace?: boolean
 }
 
 const styles = new WeakMap<Element, Style>()
@@ -314,6 +340,11 @@ class MarkdownToolbarElement extends HTMLElement {
   }
 }
 
+if (!window.customElements.get('markdown-toolbar')) {
+  window.MarkdownToolbarElement = MarkdownToolbarElement
+  window.customElements.define('markdown-toolbar', MarkdownToolbarElement)
+}
+
 function onToolbarFocus({target}: FocusEvent) {
   if (!(target instanceof Element)) return
   target.removeAttribute('tabindex')
@@ -352,11 +383,6 @@ function focusKeydown(event: KeyboardEvent) {
   event.preventDefault()
 
   buttons[n].focus()
-}
-
-if (!window.customElements.get('markdown-toolbar')) {
-  window.MarkdownToolbarElement = MarkdownToolbarElement
-  window.customElements.define('markdown-toolbar', MarkdownToolbarElement)
 }
 
 function isMultipleLines(string: string): boolean {
@@ -479,12 +505,10 @@ function expandSelectedText(
   return textarea.value.slice(textarea.selectionStart, textarea.selectionEnd)
 }
 
-interface Newlines {
+function newlinesToSurroundSelectedText(textarea: HTMLTextAreaElement): {
   newlinesToAppend: string
   newlinesToPrepend: string
-}
-
-function newlinesToSurroundSelectedText(textarea: HTMLTextAreaElement): Newlines {
+} {
   const beforeSelection = textarea.value.slice(0, textarea.selectionStart)
   const afterSelection = textarea.value.slice(textarea.selectionEnd)
 
@@ -513,12 +537,6 @@ function newlinesToSurroundSelectedText(textarea: HTMLTextAreaElement): Newlines
   }
 
   return {newlinesToAppend, newlinesToPrepend}
-}
-
-interface SelectionRange {
-  text: string
-  selectionStart: number | undefined
-  selectionEnd: number | undefined
 }
 
 function blockStyle(textarea: HTMLTextAreaElement, arg: StyleArgs): SelectionRange {
@@ -612,10 +630,6 @@ function multilineStyle(textarea: HTMLTextAreaElement, arg: StyleArgs) {
   return {text, selectionStart, selectionEnd}
 }
 
-interface UndoResult {
-  text: string
-  processed: boolean
-}
 function undoOrderedListStyle(text: string): UndoResult {
   const lines = text.split('\n')
   const orderedListRegex = /^\d+\.\s+/
@@ -724,21 +738,6 @@ function listStyle(textarea: HTMLTextAreaElement, style: StyleArgs): SelectionRa
   }
 
   return {text, selectionStart, selectionEnd}
-}
-
-interface StyleArgs {
-  prefix: string
-  suffix: string
-  blockPrefix: string
-  blockSuffix: string
-  multiline: boolean
-  replaceNext: string
-  prefixSpace: boolean
-  scanFor: string
-  surroundWithNewlines: boolean
-  orderedList: boolean
-  unorderedList: boolean
-  trimFirst: boolean
 }
 
 export default MarkdownToolbarElement
