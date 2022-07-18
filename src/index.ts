@@ -42,8 +42,9 @@ declare class MarkdownButtonElement extends HTMLElement {
 declare class MarkdownHeaderButtonElement extends MarkdownButtonElement {
     constructor();
 }
+//Added MarkdownTableButtonElement
 declare class MarkdownTableButtonElement extends MarkdownButtonElement {
-    constructor();
+    constructor(); 
 }
 declare class MarkdownBoldButtonElement extends MarkdownButtonElement {
     constructor();
